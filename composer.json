@@ -1,0 +1,12 @@
+{
+  "name": "jdoubleu/small-php-gitlab-cd",
+  "description": "This package contains a few php scripts to realize continuous delivery, integrated with gitlab.",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Joshua Westerheide",
+      "email": "dev@jdoubleu.de"
+    }
+  ]
+}
