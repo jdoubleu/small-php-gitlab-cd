@@ -1,1 +1,4 @@
 # small-php-gitlab-cd gitignore
+
+## Composer dependencies
+vendor/
