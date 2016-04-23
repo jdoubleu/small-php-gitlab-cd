@@ -69,6 +69,26 @@ class GitLabCD {
 		// Check if project is defined in config.json
 		if(!$projectConfig = $this->getProjectConfigById($requestPayload['project_id']))
 			die();
+
+		// Check if branches are set in request payload
+		if(!isset($requestPayload['ref'])) {
+			$this->logger->log("No ref set in request payload so no reference to check");
+			die();
+		}
+
+		// Check project branch config against ref
+		if(!$projectRef = preg_replace('/refs\/header\//', '', $requestPayload['ref'])) {
+			$this->logger->log("Error while getting refs from request payload");
+			die();
+		} else {
+			if(!in_array($projectRef, $projectConfig['branches'])) {
+				$this->logger->log("Updated branch is not in config so this request will be ignored.");
+				die();
+			} else {
+				$projectBranch = $projectConfig['branches'];
+			}
+		}
+
 		/*
 		 * Check for needed PHP extensions:
 		 * 1. php-curl
