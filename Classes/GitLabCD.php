@@ -123,12 +123,12 @@ class GitLabCD {
 	private function analyzeApiResponse($response) {
 		if($response["message"] == "401 Unauthorized") {
 			$this->logger->log('Cannot continue. API Request failed with code: 401 Unauthorized. Seems like the api token is invalid.');
-			die();
+			return false;
 		} else {
 			$this->logger->log('GitLab API Request was successfull. Returned with:');
 			$this->logger->log('  ' . $response);
+			return $response;
 		}
-		return $response;
 	}
 
 	/**
