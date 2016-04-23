@@ -89,4 +89,29 @@ class GitLabCD {
 		}
 		return $response;
 	}
+
+	/**
+	 * Returns project configuration of project defined in config.json by its id.
+	 *
+	 * @param int $projectId project_id (representative the gitlab project_id)
+	 * @return boolean|array false if project doesn't exist in config else array of config
+	 */
+	private function getProjectConfigById($projectId) {
+		if(isset($this->config['projects'])) {
+			if(!empty($this->config['projects'])) {
+				$config = array();
+				foreach($this->config['projects'] as $project) {
+					if(array_key_exists('id', $project) && $project['id'] == $projectId)
+						return $project;
+					return false;
+				}
+			} else {
+				$this->logger->log('No projects defined in config.json!');
+				return false;
+			}
+		} else {
+			$this->logger->log('No projects defined in config.json!');
+			return false;
+		}
+	}
 }
