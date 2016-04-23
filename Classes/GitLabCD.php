@@ -60,6 +60,20 @@ class GitLabCD {
 		$this->logger->log("Received request payload:");
 		$this->logger->log("  " . print_r($requestPayload));
 
+		/*
+		 * Check for needed PHP extensions:
+		 * 1. php-curl
+		 * 2. zip
+		 */
+		if(!extension_loaded('curl')) {
+			$this->logger->log('Cannot continue. Needed php extension curl is not loaded. See https://secure.php.net/manual/de/book.curl.php');
+			die();
+		}
+		if(!extension_loaded('zip')) {
+			$this->logger->log('Cannot continue. Needed php extension zip is not loaded. See https://secure.php.net/manual/de/book.zip.php');
+			die();
+		}
+
 		// Checks if project_id is defined in request payload
 		if(!isset($requestPayload['project_id'])) {
 			$this->logger->log("No project id set in request payload.");
@@ -87,20 +101,6 @@ class GitLabCD {
 			} else {
 				$projectBranch = $projectConfig['branches'];
 			}
-		}
-
-		/*
-		 * Check for needed PHP extensions:
-		 * 1. php-curl
-		 * 2. zip
-		 */
-		if(!extension_loaded('curl')) {
-			$this->logger->log('Cannot continue. Needed php extension curl is not loaded. See https://secure.php.net/manual/de/book.curl.php');
-			die();
-		}
-		if(!extension_loaded('zip')) {
-			$this->logger->log('Cannot continue. Needed php extension zip is not loaded. See https://secure.php.net/manual/de/book.zip.php');
-			die();
 		}
 
 		// Etablish API
