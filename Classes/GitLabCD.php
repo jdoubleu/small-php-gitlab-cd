@@ -22,4 +22,27 @@ class GitLabCD {
 		// Get a logger
 		$this->logger = Logger::getInstance();
 	}
+
+	/**
+	 * Entry function.
+	 * Analyzes the requests and handles it.
+	 */
+	public function initialize() {
+		// Start Log
+		$this->logger->log('Handle incoming request:');
+		if(isset($_SERVER['HTTP_REFERER']))
+			$this->logger->log('  Referer: ' . $_SERVER['HTTP_REFERER']);
+		$this->logger->log('  Query String: ' . $_SERVER['QUERY_STRING']);
+
+		// Read and analyze data
+		$requestData = $_REQUEST;
+
+		// Check security token
+		if($this->config['secret_token'] == $requestData['secret_token'])
+			$this->logger->log('Got correct secret token');
+		else {
+			$this->logger->log('Incorrect secret token! Got ' . $requestData['secret_token'] . ' expected ' . $this->config['secret_token']);
+			die();
+		}
+	}
 }
