@@ -47,6 +47,18 @@ class GitLabCD {
 			$this->logger->log('Incorrect secret token! Got ' . $requestData['secret_token'] . ' expected ' . $this->config['secret_token']);
 			die();
 		}
+		
+		// Checks if the request has a payload
+		if(($requestPayload = file_get_contents('php://input')) === false) {
+			$this->logger->log("Couldn't read php input stream. Failed to analyze request payload.");
+			die();
+		} elseif(!$requestPayload = json_decode($requestPayload)) {
+			$this->logger->log("Failed to analyze request payload.");
+			die();
+		}
+		// Log payload
+		$this->logger->log("Received request payload:");
+		$this->logger->log("  " . print_r($requestPayload));
 
 		/*
 		 * Check for needed PHP extensions:
