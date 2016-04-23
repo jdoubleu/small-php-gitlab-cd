@@ -60,6 +60,15 @@ class GitLabCD {
 		$this->logger->log("Received request payload:");
 		$this->logger->log("  " . print_r($requestPayload));
 
+		// Checks if project_id is defined in request payload
+		if(!isset($requestPayload['project_id'])) {
+			$this->logger->log("No project id set in request payload.");
+			die();
+		}
+
+		// Check if project is defined in config.json
+		if(!$projectConfig = $this->getProjectConfigById($requestPayload['project_id']))
+			die();
 		/*
 		 * Check for needed PHP extensions:
 		 * 1. php-curl
