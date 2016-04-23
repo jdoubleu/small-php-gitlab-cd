@@ -5,3 +5,6 @@ vendor/
 
 ## Project config
 Config/config.json
+
+## Logfiles
+Logs/*.log
