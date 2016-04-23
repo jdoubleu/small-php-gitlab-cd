@@ -1,3 +1,8 @@
 {
-  "secret_token": "AverySecretTokenOnlyYouShouldKnow"
+  "secret_token": "AverySecretTokenOnlyYouShouldKnow",
+  "cache_dir": "/home/john/tmp/gitlab-cd",
+  "gitlab_api_uri": "https://gitlab.com/api/v3",
+  "gitlab_api_key": "",
+  "project" : {
+  }
 }
