@@ -2,3 +2,6 @@
 
 ## Composer dependencies
 vendor/
+
+## Porject config
+Config/config.json
