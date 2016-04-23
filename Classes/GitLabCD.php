@@ -45,16 +45,16 @@ class GitLabCD {
 			$this->logger->log('Got correct secret token');
 		else {
 			$this->logger->log('Incorrect secret token! Got ' . $requestData['secret_token'] . ' expected ' . $this->config['secret_token']);
-			die();
+			return;
 		}
 		
 		// Checks if the request has a payload
 		if(($requestPayload = file_get_contents('php://input')) === false) {
 			$this->logger->log("Couldn't read php input stream. Failed to analyze request payload.");
-			die();
+			return;
 		} elseif(!$requestPayload = json_decode($requestPayload)) {
 			$this->logger->log("Failed to analyze request payload.");
-			die();
+			return;
 		}
 		// Log payload
 		$this->logger->log("Received request payload:");
@@ -67,37 +67,37 @@ class GitLabCD {
 		 */
 		if(!extension_loaded('curl')) {
 			$this->logger->log('Cannot continue. Needed php extension curl is not loaded. See https://secure.php.net/manual/de/book.curl.php');
-			die();
+			return;
 		}
 		if(!extension_loaded('zip')) {
 			$this->logger->log('Cannot continue. Needed php extension zip is not loaded. See https://secure.php.net/manual/de/book.zip.php');
-			die();
+			return;
 		}
 
 		// Checks if project_id is defined in request payload
 		if(!isset($requestPayload['project_id'])) {
 			$this->logger->log("No project id set in request payload.");
-			die();
+			return;
 		}
 
 		// Check if project is defined in config.json
 		if(!$projectConfig = $this->getProjectConfigById($requestPayload['project_id']))
-			die();
+			return;
 
 		// Check if branches are set in request payload
 		if(!isset($requestPayload['ref'])) {
 			$this->logger->log("No ref set in request payload so no reference to check");
-			die();
+			return;
 		}
 
 		// Check project branch config against ref
 		if(!$projectRef = preg_replace('/refs\/header\//', '', $requestPayload['ref'])) {
 			$this->logger->log("Error while getting refs from request payload");
-			die();
+			return;
 		} else {
 			if(!in_array($projectRef, $projectConfig['branches'])) {
 				$this->logger->log("Updated branch is not in config so this request will be ignored.");
-				die();
+				return;
 			} else {
 				$projectBranch = $projectConfig['branches'];
 			}
