@@ -41,7 +41,7 @@ class GitLabCD {
 		$requestData = $_REQUEST;
 
 		// Check security token
-		if($this->config['secret_token'] == $requestData['secret_token'])
+		if(isset($this->config['secret_token']) && $this->config['secret_token'] == $requestData['secret_token'])
 			$this->logger->log('Got correct secret token');
 		else {
 			$this->logger->log('Incorrect secret token! Got ' . $requestData['secret_token'] . ' expected ' . $this->config['secret_token']);
