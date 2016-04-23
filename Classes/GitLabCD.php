@@ -44,5 +44,19 @@ class GitLabCD {
 			$this->logger->log('Incorrect secret token! Got ' . $requestData['secret_token'] . ' expected ' . $this->config['secret_token']);
 			die();
 		}
+
+		/*
+		 * Check for needed PHP extensions:
+		 * 1. php-curl
+		 * 2. zip
+		 */
+		if(!extension_loaded('curl')) {
+			$this->logger->log('Cannot continue. Needed php extension curl is not loaded. See https://secure.php.net/manual/de/book.curl.php');
+			die();
+		}
+		if(!extension_loaded('zip')) {
+			$this->logger->log('Cannot continue. Needed php extension zip is not loaded. See https://secure.php.net/manual/de/book.zip.php');
+			die();
+		}
 	}
 }
