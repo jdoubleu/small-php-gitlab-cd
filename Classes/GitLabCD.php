@@ -68,4 +68,25 @@ class GitLabCD {
 		// Updating GitLab PHP API user agent
 		$this->gitlabClient->setOption('user_agent', 'small-php-gitlab-cd using php-gitlab-api');
 	}
+
+	/**
+	 * Analyzes the GitLab API Response
+	 * If it's a 401 Unauthorized it aborts the script
+	 * Logs response
+	 *
+	 * @param mixed $response Received response from the API
+	 * @return mixed Analyzed response.
+	 * 		false if access was unauthorized or the request failed
+	 *      array response if request was successful and a simple get request
+	 */
+	private function analyzeApiResponse($response) {
+		if($response["message"] == "401 Unauthorized") {
+			$this->logger->log('Cannot continue. API Request failed with code: 401 Unauthorized. Seems like the api token is invalid.');
+			die();
+		} else {
+			$this->logger->log('GitLab API Request was successfull. Returned with:');
+			$this->logger->log('  ' . $response);
+		}
+		return $response;
+	}
 }
