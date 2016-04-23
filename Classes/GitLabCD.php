@@ -12,6 +12,9 @@ class GitLabCD {
 	/** @var Logger $logger instance of a logger */
 	private $logger = null;
 
+	/** @var \Gitlab\Client $gitlabClient instance of a GitLab API Client @see https://github.com/m4tthumphrey/php-gitlab-api */
+	private $gitlabClient = null;
+
 	/**
 	 * GitLabCD constructor.
 	 */
@@ -58,5 +61,11 @@ class GitLabCD {
 			$this->logger->log('Cannot continue. Needed php extension zip is not loaded. See https://secure.php.net/manual/de/book.zip.php');
 			die();
 		}
+
+		// Etablish API
+		$this->gitlabClient = new \Gitlab\Client($this->config['gitlab_api_uri']);
+		$this->gitlabClient->authenticate($this->config['gitlab_api_key'], \Gitlab\Client::AUTH_URL_TOKEN);
+		// Updating GitLab PHP API user agent
+		$this->gitlabClient->setOption('user_agent', 'small-php-gitlab-cd using php-gitlab-api');
 	}
 }
