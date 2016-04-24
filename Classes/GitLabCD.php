@@ -207,4 +207,63 @@ class GitLabCD {
 			return false;
 		}
 	}
+
+	/**
+	 * Handles a download of an artifact and storing them to cache.
+	 * Also manages cache.
+	 *
+	 * @param int $project_id GitLab Project Id
+	 * @param int $build_id Id of the Build
+	 * @param string $date Creation of the artifact
+	 * @return array|boolean Returns false if download failed and an array with information if it was successful or from cache
+	 */
+	private function handleDownloadArtifact($project_id, $build_id, $date) {
+		$ts = date('U', $date);
+		$path = $this->config['cache_dir'] . '/' . $ts . '_' . $project_id . '_' . $build_id;
+		if(!file_exists($path) && !is_dir($path)) {
+			// Cache doesn't exist!
+			$resource = $this->config['gitlab_api_uri'] . '/projects/' . $project_id . '/builds' . $build_id . '/artifacts';
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $resource);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				"PRIVATE-TOKEN" => $this->config['gitlab_api_key']
+			));
+
+			$artifact = curl_exec($ch);
+			$errors = curl_error($ch);
+			curl_close($ch);
+
+			if($errors) {
+				$this->logger->log("Error downloading artifact of build " . $build_id . ". cURL error:");
+				$this->logger->log("  " . $errors);
+				return false;
+			}
+
+			// Creating cache dir and saving file
+			if(!mkdir($path)) {
+				$this->logger->log("Could not create cache dir " . $path);
+				return false;
+			}
+
+			// Write downloaded data to file
+			$filePath = $path . '/artifacts.zip';
+			if($file = fopen($filePath, 'w')) {
+				$this->logger->log("Could not create artifacts file in cache. Path: " . $filePath);
+				return false;
+			}
+			fwrite($file, $artifact);
+			fclose($file);
+
+			return array(
+				'mode' => 'downloaded',
+				'path' => $filePath
+			);
+		} elseif(file_exists($path . '/artifacts.zip')) {
+			return array(
+				'mode' => 'cached',
+				'path' => $path . '/artifacts.zip'
+			);
+		}
+	}
 }
