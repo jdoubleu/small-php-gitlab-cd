@@ -114,78 +114,24 @@ class GitLabCD {
 			}
 		}
 
-		// Create an API Client
-		$this->gitlabClient = new \Gitlab\Client($this->config['gitlab_api_uri']);
-		$this->gitlabClient->authenticate($this->config['gitlab_api_key'], \Gitlab\Client::AUTH_URL_TOKEN);
-		// Updating GitLab PHP API user agent
-		$this->gitlabClient->setOption('user_agent', 'small-php-gitlab-cd using php-gitlab-api');
-
-		// Get Builds by last commit
-		if(!$builds = $this->analyzeApiResponse(
-			$this->gitlabClient->api('builds')->show(array(
-				'id' => $projectConfig['project_id'],
-				'sha' => $requestPayload['checkout_sha'],
-				'scope' => 'success'
-			))
-		) || empty($builds)) {
-			$this->logger->log("There are no builds for the last commit.");
+		// Get file
+		if(!$dpath = $this->handleDownloadArtifact($requestPayload['project_id'], $requestPayload['build_id'], $requestPayload['build_finished_at']))
 			return;
-		}
-		if(!is_array($builds)) {
-			$this->logger->log("Cannot analyze api response.");
+
+		if((!isset($projectConfig['finish']['updateOnCache']) || !$projectConfig['finish']['updateOnCache']) && $dpath['mode'] === 'cached')
 			return;
-		}
 
-		// Go through builds
-		$build_ids = array();	// All builds with the correct scope will be collected
-		foreach($builds as $build) {
-			if(!isset($build['id'])) {
-				$this->logger->log("Invalid build. Build has no id!");
-				continue;
-			}
+		$output = array();
+		$rsync = 'rsync -rltgoDzvO ' . $dpath['path'] . ' ' . $projectConfig['finish']['target'];
+		exec($rsync . ' 2>&1', $tmp, $status);
 
-			if(!isset($build['name'])) {
-				$this->logger->log("Build " . $build['id'] . " has no nme!");
-				continue;
-			}
-
-			if(!in_array($build['name'], $projectConfig['jobs'])) {
-				$this->logger->log("Build " . $build['id'] . " has incorrect name. Skipping.");
-				continue;
-			}
-			
-			if(!isset($build['artifacts_files'])) {
-				$this->logger->log("Build " . $build['id'] . " has no artifacts. Skipping.");
-				continue;
-			}
-
-			array_push($build_ids, $build);
-		}
-
-		if(empty($build_ids)) {
-			$this->logger->log("No fitting builds. Exiting.");
-		}
-
-		// Get files
-		foreach($build_ids as $build) {
-			if(!$dpath = $this->handleDownloadArtifact($projectConfig['project_id'], $build['id'], $build['created_at']))
-				return;
-
-			if((!isset($projectConfig['finish']['updateOnCache']) || !$projectConfig['finish']['updateOnCache']) && $dpath['mode'] === 'cached')
-				continue;
-
-			$output = array();
-			$rsync = 'rsync -rltgoDzvO ' . $dpath['path'] . ' ' . $projectConfig['finish']['target'];
-			exec($rsync . ' 2>&1', $tmp, $status);
-
-			if(!$status) {
-				$this->logger->log("Failed to run rsync command! Errors:");
-				$this->logger->log("  " . trim(implode("\n", $output)));
-				return;
-			} else {
-				$this->logger->log("Successfully moved " . $dpath['path'] . " to " . $projectConfig['finish']['target'] . " . rsync output:");
-				$this->logger->log("  " . trim(implode("\n", $output)));
-			}
+		if(!$status) {
+			$this->logger->log("Failed to run rsync command! Errors:");
+			$this->logger->log("  " . trim(implode("\n", $output)));
+			return;
+		} else {
+			$this->logger->log("Successfully moved " . $dpath['path'] . " to " . $projectConfig['finish']['target'] . " . rsync output:");
+			$this->logger->log("  " . trim(implode("\n", $output)));
 		}
 	}
 
