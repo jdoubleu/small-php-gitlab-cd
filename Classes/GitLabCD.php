@@ -147,10 +147,10 @@ class GitLabCD {
 			if(!empty($this->config['projects'])) {
 				$config = array();
 				foreach($this->config['projects'] as $project) {
-					if(array_key_exists('id', $project) && $project['id'] == $projectId)
+					if(array_key_exists('project_id', $project) && $project['project_id'] == $projectId)
 						return $project;
-					return false;
 				}
+				return false;
 			} else {
 				$this->logger->log('No projects defined in config.json!');
 				return false;
