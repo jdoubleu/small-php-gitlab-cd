@@ -209,8 +209,9 @@ class GitLabCD {
 	}
 
 	/**
-	 * Handles a download of an artifact and storing them to cache.
-	 * Also manages cache.
+	 * Handles a download of artifacts.
+	 * Downloads them into cache dir and unzips them.
+	 * Cache control
 	 *
 	 * @param int $project_id GitLab Project Id
 	 * @param int $build_id Id of the Build
@@ -255,14 +256,32 @@ class GitLabCD {
 			fwrite($file, $artifact);
 			fclose($file);
 
+			// Unzip Archive
+			$archive = new ZipArchive();
+			$res = $archive->open($filePath);
+
+			if(!$res) {
+				$this->logger->log("Could not open artifacts archive. Exited with Zip Error:");
+				$this->logger->log("  " . $res);
+				return false;
+			}
+
+			$archive->extractTo($path . '/artifacts');
+			$archive->close();
+			
+			if(!file_exists($path . '/artifacts') && !is_dir($path . '/artifacts')) {
+				$this->logger->log("Could not extract artifacts archive.");
+				return false;
+			}
+
 			return array(
 				'mode' => 'downloaded',
-				'path' => $filePath
+				'path' => $path . '/artifacts'
 			);
-		} elseif(file_exists($path . '/artifacts.zip')) {
+		} elseif(file_exists($path . '/artifacts') && is_dir($path . '/artifacts')) {
 			return array(
 				'mode' => 'cached',
-				'path' => $path . '/artifacts.zip'
+				'path' => $path . '/artifacts'
 			);
 		}
 	}
