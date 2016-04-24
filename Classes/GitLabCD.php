@@ -58,13 +58,13 @@ class GitLabCD {
 		$this->logger->log("  " . print_r($requestPayload, false));
 
 		// Check payload for type
-		if(!$requestPayload['object_kind'] != "build") {
+		if($requestPayload['object_kind'] != "build") {
 			$this->logger->log("Invalid object_kind in request payload. Expected \"build\" got \"" . $requestPayload['object_kind'] . "\"!");
 			return;
 		}
 
 		// CHeck for build status
-		if(!$requestPayload['build_status'] != "success") {
+		if($requestPayload['build_status'] != "success") {
 			$this->logger->log("Build failed! Need successfull builds!");
 			return;
 		}
