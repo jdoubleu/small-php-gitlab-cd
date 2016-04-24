@@ -12,9 +12,6 @@ class GitLabCD {
 	/** @var Logger $logger instance of a logger */
 	private $logger = null;
 
-	/** @var \Gitlab\Client $gitlabClient instance of a GitLab API Client @see https://github.com/m4tthumphrey/php-gitlab-api */
-	private $gitlabClient = null;
-
 	/**
 	 * GitLabCD constructor.
 	 */

@@ -8,7 +8,6 @@
 
 // Load files
 require_once 'Classes/Logger.php';
-require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once 'Classes/GitLabCD.php';
 
 // Create instance of the main handler
