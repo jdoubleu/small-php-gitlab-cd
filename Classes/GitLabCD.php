@@ -84,7 +84,7 @@ class GitLabCD {
 		if(!$projectConfig = $this->getProjectConfigById($requestPayload['project_id']))
 			return;
 
-		if(!isset($projectConfig['finish']) && !is_array($projectConfig['finish'])) {
+		if(!isset($projectConfig['finish']) && !is_array($projectConfig['finish']) && !isset($projectConfig['finish']['target'])) {
 			$this->logger->log("A finish is not set for project " . $projectConfig['id'] . " ! Exiting.");
 			return;
 		}
