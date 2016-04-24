@@ -144,13 +144,13 @@ class GitLabCD {
 				continue;
 			}
 
-			if(!isset($build['stage'])) {
-				$this->logger->log("Build " . $build['id'] . " triggered by commit " . $requestPayload['checkout_sha'] . " has no stage!");
+			if(!isset($build['name'])) {
+				$this->logger->log("Build " . $build['id'] . " has no nme!");
 				continue;
 			}
 
-			if(!in_array($build['stage'], $projectConfig['stages'])) {
-				$this->logger->log("Build " . $build['id'] . " has incorrect stage. Skipping.");
+			if(!in_array($build['name'], $projectConfig['jobs'])) {
+				$this->logger->log("Build " . $build['id'] . " has incorrect name. Skipping.");
 				continue;
 			}
 			
