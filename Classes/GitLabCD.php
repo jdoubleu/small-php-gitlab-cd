@@ -202,7 +202,7 @@ class GitLabCD {
 
 			// Write downloaded data to file
 			$filePath = $path . '/artifacts.zip';
-			if($file = fopen($filePath, 'w')) {
+			if(!$file = fopen($filePath, 'w')) {
 				$this->logger->log("Could not create artifacts file in cache. Path: " . $filePath);
 				return false;
 			}
