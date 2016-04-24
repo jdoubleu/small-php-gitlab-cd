@@ -39,7 +39,7 @@ class Logger {
 		$this->logStart = $this->getTimestamp();
 
 		// Create logfile/handle
-		$this->handle = fopen(dirname(__FILE__) . "../Logs/" . $this->logStart . ".log", 'a');
+		$this->handle = fopen(realpath(dirname(__FILE__) . "/../Logs") . '/' . $this->logStart . ".log", 'a');
 	}
 
 	/**

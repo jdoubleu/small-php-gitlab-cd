@@ -20,7 +20,7 @@ class GitLabCD {
 	 */
 	public function __construct() {
 		// Get configuration
-		$this->config = json_decode(file_get_contents(dirname(__FILE__) . "/../Config/config.json"));
+		$this->config = json_decode(file_get_contents(dirname(__FILE__) . "/../Config/config.json"), true);
 
 		// Get a logger
 		$this->logger = Logger::getInstance();
@@ -52,7 +52,7 @@ class GitLabCD {
 		if(($requestPayload = file_get_contents('php://input')) === false) {
 			$this->logger->log("Couldn't read php input stream. Failed to analyze request payload.");
 			return;
-		} elseif(!$requestPayload = json_decode($requestPayload)) {
+		} elseif(!$requestPayload = json_decode($requestPayload, true)) {
 			$this->logger->log("Failed to analyze request payload.");
 			return;
 		}
