@@ -7,7 +7,11 @@
     {
       "project_id": 1,
       "branches": ["master"],
-      "stages": ["build"]
+      "stages": ["build"],
+      "finish": {
+        "updateOnCache": false,
+        "target": "/var/www/html/"
+      }
     }
   ]
 }
