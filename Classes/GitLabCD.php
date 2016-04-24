@@ -84,6 +84,11 @@ class GitLabCD {
 		if(!$projectConfig = $this->getProjectConfigById($requestPayload['project_id']))
 			return;
 
+		if(!isset($projectConfig['finish']) && !is_array($projectConfig['finish'])) {
+			$this->logger->log("A finish is not set for project " . $projectConfig['id'] . " ! Exiting.");
+			return;
+		}
+
 		// Check if branches are set in request payload
 		if(!isset($requestPayload['ref'])) {
 			$this->logger->log("No ref set in request payload so no reference to check");
