@@ -55,7 +55,7 @@ class GitLabCD {
 		}
 		// Log payload
 		$this->logger->log("Received request payload:");
-		$this->logger->log("  " . print_r($requestPayload, false));
+		$this->logger->log("  " . json_encode($requestPayload));
 
 		// Check payload for type
 		if($requestPayload['object_kind'] != "build") {
