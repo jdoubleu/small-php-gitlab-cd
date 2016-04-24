@@ -6,7 +6,8 @@
   "project" : [
     {
       "project_id": 1,
-      "branches": ["master"]
+      "branches": ["master"],
+      "stages": ["build"]
     }
   ]
 }
