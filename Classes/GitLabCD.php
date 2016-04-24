@@ -60,6 +60,18 @@ class GitLabCD {
 		$this->logger->log("Received request payload:");
 		$this->logger->log("  " . print_r($requestPayload));
 
+		// Check payload for type
+		if(!$requestPayload['object_kind'] != "build") {
+			$this->logger->log("Invalid object_kind in request payload. Expected \"build\" got \"" . $requestPayload['object_kind'] . "\"!");
+			return;
+		}
+
+		// CHeck for build status
+		if(!$requestPayload['build_status'] != "success") {
+			$this->logger->log("Build failed! Need successfull builds!");
+			return;
+		}
+
 		/*
 		 * Check for needed PHP extensions:
 		 * 1. php-curl
