@@ -103,7 +103,7 @@ class GitLabCD {
 			}
 		}
 
-		// Etablish API
+		// Create an API Client
 		$this->gitlabClient = new \Gitlab\Client($this->config['gitlab_api_uri']);
 		$this->gitlabClient->authenticate($this->config['gitlab_api_key'], \Gitlab\Client::AUTH_URL_TOKEN);
 		// Updating GitLab PHP API user agent
