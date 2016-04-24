@@ -172,7 +172,7 @@ class GitLabCD {
 	 * @return array|boolean Returns false if download failed and an array with information if it was successful or from cache
 	 */
 	private function handleDownloadArtifact($project_id, $build_id, $date) {
-		$ts = date('U', $date);
+		$ts = strtotime("2016-04-24 18:20:01 +0200");
 		$path = $this->config['cache_dir'] . '/' . $ts . '_' . $project_id . '_' . $build_id;
 		if(!file_exists($path) && !is_dir($path)) {
 			// Cache doesn't exist!
