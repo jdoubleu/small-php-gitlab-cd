@@ -131,7 +131,7 @@ class GitLabCD {
 			$this->logger->log('Cannot continue. API Request failed with code: 401 Unauthorized. Seems like the api token is invalid.');
 			return false;
 		} else {
-			$this->logger->log('GitLab API Request was successfull. Returned with:');
+			$this->logger->log('GitLab API Request was successful. Returned with:');
 			$this->logger->log('  ' . $response);
 			return $response;
 		}
