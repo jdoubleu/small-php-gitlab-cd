@@ -130,6 +130,36 @@ class GitLabCD {
 			$this->logger->log("Cannot analyze api response.");
 			return;
 		}
+
+		// Go through builds
+		$build_ids = array();	// All builds with the correct scope will be collected
+		foreach($builds as $build) {
+			if(!isset($build['id'])) {
+				$this->logger->log("Invalid build. Build has no id!");
+				continue;
+			}
+
+			if(!isset($build['stage'])) {
+				$this->logger->log("Build " . $build['id'] . " triggered by commit " . $requestPayload['checkout_sha'] . " has no stage!");
+				continue;
+			}
+
+			if(!in_array($build['stage'], $projectConfig['stages'])) {
+				$this->logger->log("Build " . $build['id'] . " has incorrect stage. Skipping.");
+				continue;
+			}
+			
+			if(!isset($build['artifacts_files'])) {
+				$this->logger->log("Build " . $build['id'] . " has no artifacts. Skipping.");
+				continue;
+			}
+
+			array_push($build_ids, $build['id']);
+		}
+
+		if(empty($build_ids)) {
+			$this->logger->log("No fitting builds. Exiting.");
+		}
 	}
 
 	/**
