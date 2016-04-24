@@ -63,7 +63,7 @@ class GitLabCD {
 			return;
 		}
 
-		// CHeck for build status
+		// Check for build status
 		if($requestPayload['build_status'] != "success") {
 			$this->logger->log("Build failed! Need successfull builds!");
 			return;
@@ -112,8 +112,6 @@ class GitLabCD {
 			if(!in_array($projectRef, $projectConfig['branches'])) {
 				$this->logger->log("Updated branch is not in config so this request will be ignored.");
 				return;
-			} else {
-				$projectBranch = $projectConfig['branches'];
 			}
 		}
 
