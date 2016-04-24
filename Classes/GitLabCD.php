@@ -114,6 +114,22 @@ class GitLabCD {
 		$this->gitlabClient->authenticate($this->config['gitlab_api_key'], \Gitlab\Client::AUTH_URL_TOKEN);
 		// Updating GitLab PHP API user agent
 		$this->gitlabClient->setOption('user_agent', 'small-php-gitlab-cd using php-gitlab-api');
+
+		// Get Builds by last commit
+		if(!$builds = $this->analyzeApiResponse(
+			$this->gitlabClient->api('builds')->show(array(
+				'id' => $projectConfig['project_id'],
+				'sha' => $requestPayload['checkout_sha'],
+				'scope' => 'success'
+			))
+		) || empty($builds)) {
+			$this->logger->log("There are no builds for the last commit.");
+			return;
+		}
+		if(!is_array($builds)) {
+			$this->logger->log("Cannot analyze api response.");
+			return;
+		}
 	}
 
 	/**
