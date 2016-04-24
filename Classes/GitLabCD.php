@@ -90,6 +90,12 @@ class GitLabCD {
 			return;
 		}
 
+		// Check and get commit sha
+		if(!isset($requestPayload['checkout_sha'])) {
+			$this->logger->log("No checkout commit found!");
+			return;
+		}
+
 		// Check project branch config against ref
 		if(!$projectRef = preg_replace('/refs\/header\//', '', $requestPayload['ref'])) {
 			$this->logger->log("Error while getting refs from request payload");
