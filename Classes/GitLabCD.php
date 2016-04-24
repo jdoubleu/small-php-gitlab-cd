@@ -145,7 +145,6 @@ class GitLabCD {
 	private function getProjectConfigById($projectId) {
 		if(isset($this->config['projects'])) {
 			if(!empty($this->config['projects'])) {
-				$config = array();
 				foreach($this->config['projects'] as $project) {
 					if(array_key_exists('project_id', $project) && $project['project_id'] == $projectId)
 						return $project;
