@@ -165,6 +165,28 @@ class GitLabCD {
 		if(empty($build_ids)) {
 			$this->logger->log("No fitting builds. Exiting.");
 		}
+
+		// Get files
+		foreach($build_ids as $build) {
+			if(!$dpath = $this->handleDownloadArtifact($projectConfig['project_id'], $build['id'], $build['created_at']))
+				return;
+
+			if((!isset($projectConfig['finish']['updateOnCache']) || !$projectConfig['finish']['updateOnCache']) && $dpath['mode'] === 'cached')
+				continue;
+
+			$output = array();
+			$rsync = 'rsync -rltgoDzvO ' . $dpath['path'] . ' ' . $projectConfig['finish']['target'];
+			exec($rsync . ' 2>&1', $tmp, $status);
+
+			if(!$status) {
+				$this->logger->log("Failed to run rsync command! Errors:");
+				$this->logger->log("  " . trim(implode("\n", $output)));
+				return;
+			} else {
+				$this->logger->log("Successfully moved " . $dpath['path'] . " to " . $projectConfig['finish']['target'] . " . rsync output:");
+				$this->logger->log("  " . trim(implode("\n", $output)));
+			}
+		}
 	}
 
 	/**
