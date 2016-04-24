@@ -159,7 +159,7 @@ class GitLabCD {
 				continue;
 			}
 
-			array_push($build_ids, $build['id']);
+			array_push($build_ids, $build);
 		}
 
 		if(empty($build_ids)) {
