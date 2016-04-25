@@ -228,12 +228,12 @@ class GitLabCD {
 
 			return array(
 				'mode' => 'downloaded',
-				'path' => $path . '/artifacts'
+				'path' => $path . '/artifacts/'
 			);
 		} elseif(file_exists($path . '/artifacts') && is_dir($path . '/artifacts')) {
 			return array(
 				'mode' => 'cached',
-				'path' => $path . '/artifacts'
+				'path' => $path . '/artifacts/'
 			);
 		}
 	}
