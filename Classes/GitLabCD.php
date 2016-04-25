@@ -175,12 +175,12 @@ class GitLabCD {
 		$path = $this->config['cache_dir'] . '/' . $ts . '_' . $project_id . '_' . $build_id;
 		if(!file_exists($path) && !is_dir($path)) {
 			// Cache doesn't exist!
-			$resource = $this->config['gitlab_api_uri'] . '/projects/' . $project_id . '/builds' . $build_id . '/artifacts';
+			$resource = $this->config['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts';
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $resource);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				"PRIVATE-TOKEN" => $this->config['gitlab_api_key']
+				"PRIVATE-TOKEN: " . $this->config['gitlab_api_key']
 			));
 
 			$artifact = curl_exec($ch);
