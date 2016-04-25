@@ -3,12 +3,15 @@ This project contains some simple scripts to deploy gitlab artifacts which are c
 
 This project is still in development but works so far ([See Coming Features](#coming-features)).
 
-
 ## Requirements
 * You need `php >= 5.6`.
     * Optionally, `composer` is required for creating project with composer.
 * `rsync` is required to move files from cache to your defined target ([See Configuration](#configuration)).
 * You need write permission to the `Logs` and `secret_token` directories.
+
+## Installation
+* Clone this repository: `git clone https://github.com/jdoubleu/small-php-gitlab-cd.git`,
+* Use [Composer](https://getcomposer.org/) to create a new project: `composer create-project jdoubleu/small-php-gitlab-cd`
 
 ## <a name="configuration"></a>Configuration
 A `config.example.json` can be found in `Config/` dir and should be renamed to `config.json`.
