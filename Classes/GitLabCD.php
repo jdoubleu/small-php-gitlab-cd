@@ -187,7 +187,7 @@ class GitLabCD {
 			$errors = curl_error($ch);
 			curl_close($ch);
 
-			if($errors) {
+			if($errors || $respond = json_decode($artifact, true)) {
 				$this->logger->log("Error downloading artifact of build " . $build_id . ". cURL error:");
 				$this->logger->log("  " . $errors);
 				return false;
