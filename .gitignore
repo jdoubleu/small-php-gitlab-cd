@@ -1,1 +1,10 @@
 # small-php-gitlab-cd gitignore
+
+## Composer dependencies
+vendor/
+
+## Project config
+Config/config.json
+
+## Logfiles
+Logs/*.log
