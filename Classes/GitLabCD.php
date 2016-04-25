@@ -123,8 +123,8 @@ class GitLabCD {
 			return;
 
 		$output = array();
-		$rsync = 'rsync -rltgoDzvO ' . $dpath['path'] . ' ' . $projectConfig['finish']['target'];
-		exec($rsync . ' 2>&1', $tmp, $status);
+		$rsync = 'rsync -rltgoDzvO --stats ' . $dpath['path'] . ' ' . $projectConfig['finish']['target'];
+		exec($rsync . ' 2>&1', $output, $status);
 
 		if(!$status) {
 			$this->logger->log("Failed to run rsync command! Errors:");
