@@ -45,12 +45,12 @@ if(!isset($USER_CONFIG) || !is_array($USER_CONFIG))
 // Merge settings
 array_walk($CONFIG = array(
 	"secret_token" => "AverySecretTokenOnlyYouShouldKnow",
-	"tmp_dir" => "/tmp/spgcd-" . time(),
+	"tmp_dir" => "/tmp/spgcd-artifacts",
 	"gitlab_api_uri" => "https://gitlab.com/api/v3",
 	"gitlab_api_token" => "",
-	"project_id" => 0,
+	"project_id" => -1,
 	"branches" => array("master"),
-	"jobs" => array(),
+	"jobs" => array("default"),
 	"target_dir" => "/tmp/spgcd-target",
 	"delete_files" => false,
 	"post_commands" => array(),
