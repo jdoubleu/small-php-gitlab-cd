@@ -30,3 +30,31 @@ if(file_exists($config_file = basename(__FILE__,'-php') . '-config.php')) {
 	define("CONFIG_FILE", __FILE__);
 }
 
+/**
+ * Collects all settings made in config file and fills them with default
+ * configs if they are not set.
+ *
+ * First checks if config array is defined.
+ *
+ * $CONFIG is an array storing all configuration made by the user or default value.
+ * See config file for more information of it's items.
+ */
+if(!isset($USER_CONFIG) || !is_array($USER_CONFIG))
+	$USER_CONFIG = array();
+
+// Merge settings
+array_walk($CONFIG = array(
+	"secret_token" => "AverySecretTokenOnlyYouShouldKnow",
+	"tmp_dir" => "/tmp/spgcd-" . time(),
+	"gitlab_api_uri" => "https://gitlab.com/api/v3",
+	"gitlab_api_token" => "",
+	"project_id" => 0,
+	"branches" => array("master"),
+	"jobs" => array(),
+	"target_dir" => "/tmp/spgcd-target",
+	"delete_files" => false,
+	"post_commands" => array()
+), function(&$item, $key) {
+	if(isset($USER_CONFIG[$key]) && gettype($item) === gettype($USER_CONFIG[$key]))
+		$item = $USER_CONFIG[$key];
+});
