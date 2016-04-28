@@ -53,7 +53,8 @@ array_walk($CONFIG = array(
 	"jobs" => array(),
 	"target_dir" => "/tmp/spgcd-target",
 	"delete_files" => false,
-	"post_commands" => array()
+	"post_commands" => array(),
+	"email_error" => false
 ), function(&$item, $key) {
 	if(isset($USER_CONFIG[$key]) && gettype($item) === gettype($USER_CONFIG[$key]))
 		$item = $USER_CONFIG[$key];

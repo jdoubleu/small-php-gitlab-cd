@@ -130,3 +130,17 @@ $USER_CONFIG["delete_files"] = true;
  * @var array
  */
 $USER_CONFIG["post_commands"] = array();
+
+/**
+ * Error Reporting
+ *
+ * List of email addresses which will be notified if deployment failed.
+ *
+ * Give a single address or a comma separated list. Set it to false to don't get notified.
+ *
+ * Make sure you can send emails with php!
+ *
+ * @default false
+ * @var boolean|string
+ */
+$USER_CONFIG["email_error"] = false;
