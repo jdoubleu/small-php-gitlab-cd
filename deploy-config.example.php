@@ -119,6 +119,16 @@ $USER_CONFIG["target_dir"] = "/tmp/spgcd-target";
 $USER_CONFIG["delete_files"] = true;
 
 /**
+ * Clean Up
+ *
+ * Whether to remove artifacts from temp dir after successful deploying files.
+ *
+ * @default true
+ * @var boolean
+ */
+$USER_CONFIG["cleanup"] = true;
+
+/**
  * Post Script Commands
  *
  * List of commands which will be executed if deployment was successful.
