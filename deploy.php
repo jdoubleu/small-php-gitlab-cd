@@ -175,6 +175,11 @@ if(MODE == "REQUEST" && !in_array($requestPayload['ref'], $CONFIG['branches']))
 	log("This build will be skipped due to mismatching branches.");
 
 /*
+ * Test TMP DIR
+ */
+if(!file_exists($CONFIG['tmp_dir']) || !is_dir($CONFIG['tmp_dir']))
+	log('TMP dir does not exist or is not a directory! Aborting.') && exit(250);
+
  * ==================== END deployment ====================
  */
 
