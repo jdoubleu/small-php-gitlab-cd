@@ -43,6 +43,16 @@ where
 * -p determines the project id (optional if no project id is given in config) and
 * -b the build id
 
+## Errors
+If the script failed check the error log!
+
+Some errors are not displayed in the error log:
+* When the API request returned a 401 Unauthenticated
+* When the project and/or build cannot be found
+* When there is no artifact for the given build
+
+Please keep this in mind! Try to check this by executing the curl command manually on your shell.
+
 ## Contribute
 You are welcome to contribute to this project. Either in creating issues or submitting code.
 
