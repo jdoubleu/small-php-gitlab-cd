@@ -1,40 +1,43 @@
-# Small PHP GitLab CD
-This project contains some simple scripts to deploy gitlab artifacts which are created by builds.
+# Small PHP GitLab CD v0.2
+This project contains a simple script to deploy GitLab artifacts.
 
-This project is still in development but works so far ([See Coming Features](#coming-features)).
+Build artifcats can be build using the GitLab CI ([more here](http://doc.gitlab.com/ce/ci/build_artifacts/README.html)).
+
+This project was heavily inspired by [simple-php-git-deploy](https://github.com/markomarkovic/simple-php-git-deploy).
 
 ## Requirements
 * You need `php >= 5.6`.
     * Optionally, `composer` is required for creating project with composer.
-* `rsync` is required to move files from cache to your defined target ([See Configuration](#configuration)).
-* You need write permission to the `Logs` and `secret_token` directories.
+    * Optionally, `sendmail` is required to send notifications on errors.
+* `curl` is required to download artifacts from gitlab using the api,
+* `unzip` is required to extract the artifacts and finally
+* `rsync` is required to move files from cache to the defined target.
+* You also need read and write permissions to all defined directories ([See Configuration](#configuration)).
 
 ## Installation
-* Clone this repository: `git clone https://github.com/jdoubleu/small-php-gitlab-cd.git`,
+* Clone this repository: `git clone https://github.com/jdoubleu/small-php-gitlab-cd.git` or
 * Use [Composer](https://getcomposer.org/) to create a new project: `composer create-project jdoubleu/small-php-gitlab-cd`
 
 ## <a name="configuration"></a>Configuration
-A `config.example.json` can be found in `Config/` dir and should be renamed to `config.json`.
+Copy the `deploy-config.example.php` to `deploy-config.php`. The deploy script looks for a file with its name appended with "config" so
+you can create as much configurations as you want.
 
-Configure this file to your needs.
-
-The `secret_token` property represents a private token such like an api key and should be added as GET parameter to your url.
+Have a look at the comments in the config file(s)!
 
 ## Usage
-Go into your GitLab instance (or to [gitlab.com](gitlab.com)), go to the settings of your project and create a Webhook.
+Go into your GitLab instance (or to [gitlab.com](gitlab.com)), then go to the settings of your project and create a Webhook.
 Select only `Build events` and enter the url with appended value of `secret_token` in `URL` field.
 
 For example: `https://cd.example.com/deployment/?secret_token=AverySecretTokenOnlyYouShouldKnow`
 
-Now you're done! Eevery time a build happens your script is called. Only on fitting and successful builds your script tries to deploy
+Now you're done! Every time a build happens your script is called. Only on fitting and successful builds your script tries to deploy
 the artifacts.
 
-## <a name="coming-features"></a>Coming Features
-I will - and you are welcome to contribute - restructure the whole scripts to be more simplified and procedural such like [simple-php-git-deploy](https://github.com/markomarkovic/simple-php-git-deploy).
-
 ## Contribute
-You are welcome to contribute to this project.
+You are welcome to contribute to this project. Either in creating issues or submitting code.
 
-Please checkout `develop` branch and create a feature branch out of it. If you are finished create a PR on `develop`.
+Please checkout `develop` branch. If you want to introduce a new feature you should create a feature
+branch out of the `develop` branch.
+If you are finished just create a PR on `develop`.
 
-Thanks alot!
+Thank You!
