@@ -198,6 +198,22 @@ if(!$return_code)
 	log("Error executing curl to download artifacts! Aborting") && exit(300);
 
 /*
+ * Unpack Artifacts
+ */
+$unzip_exec = sprintf(
+	'unzip -d %s %s',
+	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id ,
+	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id  . '.zip'
+);
+
+$tmp = array();
+exec($unzip_exec .' 2>&1', $tmp, $return_code); // Execute the command
+
+log("Executed unzip: " . trim(implode("\n", $tmp)));
+if(!$return_code)
+	log("Error executing unzip! Aborting") && exit(301);
+
+/*
  * ==================== END deployment ====================
  */
 
