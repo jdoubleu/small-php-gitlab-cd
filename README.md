@@ -25,6 +25,7 @@ you can create as much configurations as you want.
 Have a look at the comments in the config file(s)!
 
 ## Usage
+### For WebHook's
 Go into your GitLab instance (or to [gitlab.com](gitlab.com)), then go to the settings of your project and create a Webhook.
 Select only `Build events` and enter the url with appended value of `secret_token` in `URL` field.
 
@@ -32,6 +33,15 @@ For example: `https://cd.example.com/deployment/?secret_token=AverySecretTokenOn
 
 Now you're done! Every time a build happens your script is called. Only on fitting and successful builds your script tries to deploy
 the artifacts.
+
+### From CLI
+Run the deploy script manually using your php interpreter like this:
+```
+/usr/bin/php path/to/deploy.php -p 1 -b 10
+```
+where
+* -p determines the project id (optional if no project id is given in config) and
+* -b the build id
 
 ## Contribute
 You are welcome to contribute to this project. Either in creating issues or submitting code.
