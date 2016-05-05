@@ -215,6 +215,21 @@ if(!$return_code)
 	log("Error executing unzip! Aborting") && exit(301);
 
 /*
+ * Cleanup tmp dir
+ */
+if($CONFIG['cleanup']) {
+	$cleanup_exec = 'rm -rf ' . $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/ ' .
+		$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip';
+
+	$tmp = array();
+	exec($cleanup_exec .' 2>&1', $tmp, $return_code); // Execute the command
+
+	log("Cleaning tmp dir: " . trim(implode("\n", $tmp)));
+	if(!$return_code)
+		log("Error cleaning tmp dir! Aborting") && exit(301);
+}
+
+/*
  * Deploy files to target
  */
 $rsync_exec = sprintf(
