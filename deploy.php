@@ -202,7 +202,7 @@ if(!$return_code)
  */
 $unzip_exec = sprintf(
 	'unzip -d %s %s',
-	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id ,
+	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/',
 	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id  . '.zip'
 );
 
