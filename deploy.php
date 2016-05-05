@@ -25,7 +25,7 @@ define("MODE", (!empty($argc) && isset($argc[0]) ? "CLI" : "REQUEST"));
  * It is recommended to use an external config file rather than changing default
  * configuration in this file.
  */
-if(file_exists($config_file = basename(__FILE__,'-php') . '-config.php')) {
+if(file_exists($config_file = basename(__FILE__,'.php') . '-config.php')) {
 	define("CONFIG_FILE", $config_file);
 	require_once $config_file;
 } else {
