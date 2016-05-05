@@ -182,12 +182,18 @@ if(!file_exists($CONFIG['tmp_dir']) || !is_dir($CONFIG['tmp_dir']))
 	log('TMP dir does not exist or is not a directory! Aborting.') && exit(250);
 
 /*
+ * Set up vars for storing paths
+ */
+$artifact_file = $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip';
+$artifact_path = $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/';
+
+/*
  * Download artifacts
  */
 $curl_exec = sprintf(
 	'curl -H %s -o % %s',
 	"PRIVATE-TOKEN: " . $CONFIG['gitlab_api_token'],
-	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip',
+	$artifact_file,
 	$CONFIG['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts'
 );
 
@@ -203,8 +209,8 @@ if(!$return_code)
  */
 $unzip_exec = sprintf(
 	'unzip -d %s %s',
-	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/',
-	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id  . '.zip'
+	$artifact_path,
+	$artifact_file
 );
 
 $tmp = array();
@@ -215,26 +221,11 @@ if(!$return_code)
 	log("Error executing unzip! Aborting") && exit(301);
 
 /*
- * Cleanup tmp dir
- */
-if($CONFIG['cleanup']) {
-	$cleanup_exec = 'rm -rf ' . $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/ ' .
-		$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip';
-
-	$tmp = array();
-	exec($cleanup_exec .' 2>&1', $tmp, $return_code); // Execute the command
-
-	log("Cleaning tmp dir: " . trim(implode("\n", $tmp)));
-	if(!$return_code)
-		log("Error cleaning tmp dir! Aborting") && exit(301);
-}
-
-/*
  * Deploy files to target
  */
 $rsync_exec = sprintf(
 	'rsync -rltgoDzvO %s %s %s',
-	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/',
+	$artifact_path,
 	$CONFIG['target_dir'],
 	($CONFIG['delete_files']) ? '--delete-after' : ''
 );
@@ -245,6 +236,22 @@ exec($rsync_exec .' 2>&1', $tmp, $return_code); // Execute the command
 log("Executed rsync: " . trim(implode("\n", $tmp)));
 if(!$return_code)
 	log("Error executing rsync! Aborting") && exit(302);
+
+
+/*
+ * Cleanup tmp dir
+ */
+if($CONFIG['cleanup']) {
+	$cleanup_exec = 'rm -rf ' . $artifact_path . ' ' . $artifact_file;
+
+	$tmp = array();
+	exec($cleanup_exec .' 2>&1', $tmp, $return_code); // Execute the command
+
+	log("Cleaning tmp dir: " . trim(implode("\n", $tmp)));
+	if(!$return_code)
+		log("Error cleaning tmp dir! Aborting") && exit(301);
+}
+
 
 /*
  * ==================== END deployment ====================
