@@ -62,3 +62,51 @@ array_walk($CONFIG, function(&$item, $key) {
 	if(isset($USER_CONFIG[$key]) && gettype($item) === gettype($USER_CONFIG[$key]))
 		$item = $USER_CONFIG[$key];
 });
+
+/**
+ * Log handler.
+ * Either a file handler or html head
+ *
+ * @var boolean|string|resource
+ */
+$loghandle = false;
+/**
+ * Logging
+ *
+ * Manages logging into a file or direct output.
+ *
+ * @param string $msg Log Message
+ */
+function log($msg) {
+	global $loghandle, $CONFIG;
+
+	if(!$CONFIG['logging'])
+		return;
+
+	if($CONFIG['logging'] == "FILE") {
+		if(!$loghandle)
+			$loghandle = fopen($CONFIG['logging_file'], 'a');
+		fwrite($loghandle, '[' . time() . '] ' . $msg);
+	} elseif($CONFIG['logging'] == "OUTPUT") {
+		if(!$loghandle)
+			echo $loghandle = '<!DOCUMENT html>\n' .
+				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
+				'<body>';
+		echo '[' . time() . '] ' . htmlspecialchars($msg);
+	}
+}
+
+/*
+ * Close logging
+ *
+ * Either close file handle or end html document
+ *
+ * Should be placed at the end of the file or when no more
+ * logging is needed.
+ */
+if(!$CONFIG['logging']) {
+	if($CONFIG['logging'] == "FILE" && $loghandle)
+		fclose($loghandle);
+	elseif($CONFIG['logging'] == "OUTPUT" && $loghandle)
+		echo '</body></html>';
+}
