@@ -248,16 +248,8 @@ $commands['rsync'] = sprintf(
 /*
  * Cleanup tmp dir
  */
-if($CONFIG['cleanup']) {
+if($CONFIG['cleanup'])
 	$commands['cleanup'] = 'rm -rf ' . $artifact_path . ' ' . $artifact_file;
-
-	$tmp = array();
-	exec($cleanup_exec .' 2>&1', $tmp, $return_code); // Execute the command
-
-	log("Cleaning tmp dir: " . trim(implode("\n", $tmp)));
-	if(!$return_code)
-		log("Error cleaning tmp dir! Aborting") && error(301);
-}
 
 /*
  * Execute all commands
@@ -276,6 +268,8 @@ foreach($commands as $cmd) {
 
 		if(isset($commands['cleanup']))
 			log("Cleaning tmp dir. Executing '" . $commands['cleanup'] . "'") && shell_exec($commands['cleanup']);
+
+		error(301);
 	}
 }
 
