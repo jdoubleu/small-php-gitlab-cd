@@ -187,62 +187,47 @@ if(!file_exists($CONFIG['tmp_dir']) || !is_dir($CONFIG['tmp_dir']))
 $artifact_file = $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip';
 $artifact_path = $CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/';
 
+/**
+ * Stores commands to execute
+ *
+ * @var array
+ */
+$commands = array();
+
 /*
  * Download artifacts
  */
-$curl_exec = sprintf(
+$commands['curl'] = sprintf(
 	'curl -H %s -o % %s',
 	"PRIVATE-TOKEN: " . $CONFIG['gitlab_api_token'],
 	$artifact_file,
 	$CONFIG['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts'
 );
 
-$tmp = array();
-exec($curl_exec .' 2>&1', $tmp, $return_code); // Execute the command
-
-log("Executed curl: " . trim(implode("\n", $tmp)));
-if(!$return_code)
-	log("Error executing curl to download artifacts! Aborting") && exit(300);
-
 /*
  * Unpack Artifacts
  */
-$unzip_exec = sprintf(
+$commands['unzip'] = sprintf(
 	'unzip -d %s %s',
 	$artifact_path,
 	$artifact_file
 );
 
-$tmp = array();
-exec($unzip_exec .' 2>&1', $tmp, $return_code); // Execute the command
-
-log("Executed unzip: " . trim(implode("\n", $tmp)));
-if(!$return_code)
-	log("Error executing unzip! Aborting") && exit(301);
-
 /*
  * Deploy files to target
  */
-$rsync_exec = sprintf(
+$commands['rsync'] = sprintf(
 	'rsync -rltgoDzvO %s %s %s',
 	$artifact_path,
 	$CONFIG['target_dir'],
 	($CONFIG['delete_files']) ? '--delete-after' : ''
 );
 
-$tmp = array();
-exec($rsync_exec .' 2>&1', $tmp, $return_code); // Execute the command
-
-log("Executed rsync: " . trim(implode("\n", $tmp)));
-if(!$return_code)
-	log("Error executing rsync! Aborting") && exit(302);
-
-
 /*
  * Cleanup tmp dir
  */
 if($CONFIG['cleanup']) {
-	$cleanup_exec = 'rm -rf ' . $artifact_path . ' ' . $artifact_file;
+	$commands['cleanup'] = 'rm -rf ' . $artifact_path . ' ' . $artifact_file;
 
 	$tmp = array();
 	exec($cleanup_exec .' 2>&1', $tmp, $return_code); // Execute the command
@@ -250,6 +235,26 @@ if($CONFIG['cleanup']) {
 	log("Cleaning tmp dir: " . trim(implode("\n", $tmp)));
 	if(!$return_code)
 		log("Error cleaning tmp dir! Aborting") && exit(301);
+}
+
+/*
+ * Execute all commands
+ */
+foreach($commands as $cmd) {
+	$stdout = array();
+
+	log("Executing '" . $cmd . "'");
+	exec($cmd . ' 2&>1', $stdout, $code);	// Executes a command
+
+	log("Returns " . trim(implode("\n", $stdout)));
+
+	// on error
+	if(!$code) {
+		log("Command execution ended with an error! Aborting.");
+
+		if(isset($commands['cleanup']))
+			log("Cleaning tmp dir. Executing '" . $commands['cleanup'] . "'") && shell_exec($commands['cleanup']);
+	}
 }
 
 
