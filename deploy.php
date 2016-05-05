@@ -65,6 +65,26 @@ array_walk($CONFIG, function(&$item, $key) {
 });
 
 /**
+ * Error
+ *
+ * Stores if script ended up with an error
+ *
+ * @var boolean
+ */
+$error = false;
+
+/**
+ * Aborts script execution and sets error var
+ *
+ * @param string $code Error Code
+ */
+function error($code) {
+	global $error;
+	$error = true;
+	exit($code);
+}
+
+/**
  * Log handler.
  * Either a file handler or html head
  *
