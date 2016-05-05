@@ -7,5 +7,5 @@ vendor/
 Config/config.json
 *-config.php
 
-## Logfiles
-Logs/*.log
+## Logifles
+logs/
