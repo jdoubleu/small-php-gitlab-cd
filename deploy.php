@@ -64,6 +64,9 @@ array_walk($CONFIG, function(&$item, $key) {
 		$item = $USER_CONFIG[$key];
 });
 
+// Start output buffer
+ob_start();
+
 /**
  * Error
  *
@@ -74,49 +77,21 @@ array_walk($CONFIG, function(&$item, $key) {
 $error = false;
 
 /**
- * Aborts script execution and sets error var
- *
- * @param string $code Error Code
- */
-function error($code) {
-	global $error;
-	$error = true;
-	exit($code);
-}
-
-/**
- * Log handler.
- * Either a file handler or html head
- *
- * @var boolean|string|resource
- */
-$loghandle = false;
-
-/**
  * Logging
  *
- * Manages logging into a file or direct output.
+ * Manages logging by echoing into buffer.
+ * If message is error this function will also aborts the script.
  *
  * @param string $msg Log Message
+ * @param boolean|int $status False if no error, else error code
  */
-function log($msg) {
-	global $loghandle, $CONFIG;
+function log($msg, $status = false) {
+	global $CONFIG, $error;
 
-	if(!$CONFIG['logging'])
-		return;
+	echo '[' . time() . '] ' . $msg . "\n";
 
-	if($CONFIG['logging'] == "FILE") {
-		if(!$loghandle)
-			$loghandle = fopen($CONFIG['logging_file'], 'a');
-		fwrite($loghandle, '[' . time() . '] ' . $msg . "\n");
-	} elseif($CONFIG['logging'] == "OUTPUT") {
-		ob_start();
-		if(!$loghandle && MODE == "REQUEST")
-			echo $loghandle = '<!DOCUMENT html>\n' .
-				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
-				'<body>';
-		echo '[' . time() . '] ' . htmlspecialchars($msg) . "\n";
-	}
+	if($status)
+		$error = true && exit($status);
 }
 
 /*
@@ -279,54 +254,47 @@ foreach($commands as $cmd) {
  */
 
 /*
- * Close logging
+ * Destructor for this script.
  *
- * Either close file handle or end html document
+ * Is called when the script aborts (due to error) or finishes.
  *
- * Is called when the script aborts or finishes
+ * Manages logging output and email notification on error
  */
 register_shutdown_function(function() {
-	global $CONFIG, $loghandle;
+	global $CONFIG, $error;
 
-	if(!$CONFIG['logging']) {
-		if($CONFIG['logging'] == "FILE" && $loghandle)
-			fclose($loghandle);
-		elseif($CONFIG['logging'] == "OUTPUT" && $loghandle)
-			echo '</body></html>';
+	/**
+	 * Logging output
+	 *
+	 * @var string
+	 */
+	$output = ob_get_contents();
+
+	// Stop logging
+	ob_end_clean();
+
+	// Write log to file or output if set
+	if($CONFIG['logging']) {
+		if($CONFIG['logging'] == "FILE")
+			file_put_contents($CONFIG['logging_file'], $output);
+		elseif($CONFIG['logging'] == "OUTPUT")
+			echo '<!DOCUMENT html>\n' .
+				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
+				'<body>' . htmlspecialchars($output) . '</body></html>';
 	}
-});
 
-/*
- * Mail if error happened
- *
- * Is called when the script aborts and email error reporting is enabled.
- */
-register_shutdown_function(function() {
-	global $CONFIG, $error, $loghandle;
-
-	if($CONFIG['email_error'] && $error) {
-		$error = sprintf(
-			'Deployment error on %s using %s!',
-			$_SERVER['HTTP_HOST'],
-			__FILE__
-		);
-
-		// get error log
-		$output = "";
-		if(!$CONFIG['logging']) {
-			if($CONFIG['logging'] == "FILE" && $loghandle)
-				$output = file_get_contents($CONFIG['logging_file']);
-			elseif($CONFIG['logging'] == "OUTPUT" && $loghandle) {
-				$output = ob_get_contents();
-				ob_end_clean();
-			}
-		}
-
+	// email on error
+	if($error && $CONFIG['email_error']) {
+		// email headers
 		$headers = array();
 		$headers[] = sprintf('From: Small PHP GitLab CD <small-php-gitlab-cd@%s>', $_SERVER['HTTP_HOST']);
 		$headers[] = sprintf('X-Mailer: PHP/%s', phpversion());
-		mail($CONFIG['email_error'], $error, strip_tags(trim($output)), implode("\r\n", $headers));
-	}
 
-	ob_end_flush();
+		// mail
+		mail($CONFIG['email_error'], sprintf(
+			'Deployment error on %s using %s!',
+			$_SERVER['HTTP_HOST'],
+			__FILE__
+		), strip_tags(trim($output)), implode("\r\n", $headers));
+	}
 });
