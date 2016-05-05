@@ -130,12 +130,6 @@ foreach($neededBinaries as $bin) {
 		log("Binaries for " . $bin . " not found! Aborting") && exit(200);
 }
 
-// Check for project id in CLI call
-if(MODE == "CLI" && $CONFIG['project_id'] < 0 && $pkey = array_search('-p', $argv) && isset($argv[$pkey+1]))
-	$project_id = $argv[$pkey+1];
-else
-	log("No project id given! Use -p parameter (See help for more information).") && exit(101);
-
 // Reads incoming payload or argument
 if(MODE == "REQUEST") {
 	if(($requestPayload = file_get_contents('php://input')) == false)
@@ -145,7 +139,16 @@ if(MODE == "REQUEST") {
 	else
 		log("Got a request payload!");
 } elseif(MODE == "CLI") {
-	if(!$bkey = array_search('-b', $argv) || !isset($argv[$bkey+1]))
+	if($CONFIG['project_id'] >= 0)
+		$project_id = $CONFIG['project_id'];
+	elseif($pkey = array_search('-p', $argv) && isset($argv[$pkey+1]))
+		$project_id = $argv[$pkey+1];
+	else
+		log("No project id given! Use -p parameter (See help for more information).") && exit(114);
+
+	if($bkey = array_search('-b', $argv) && isset($argv[$bkey+1]))
+		$build_id = $argv[$bkey+1];
+	else
 		log("A build id is not given! Use -b parameter (See help for more information).") && exit(113);
 }
 
