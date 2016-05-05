@@ -214,6 +214,23 @@ if(!$return_code)
 	log("Error executing unzip! Aborting") && exit(301);
 
 /*
+ * Deploy files to target
+ */
+$rsync_exec = sprintf(
+	'rsync -rltgoDzvO %s %s %s',
+	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '/',
+	$CONFIG['target_dir'],
+	($CONFIG['delete_files']) ? '--delete-after' : ''
+);
+
+$tmp = array();
+exec($rsync_exec .' 2>&1', $tmp, $return_code); // Execute the command
+
+log("Executed rsync: " . trim(implode("\n", $tmp)));
+if(!$return_code)
+	log("Error executing rsync! Aborting") && exit(302);
+
+/*
  * ==================== END deployment ====================
  */
 
