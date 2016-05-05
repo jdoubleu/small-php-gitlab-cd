@@ -6,3 +6,6 @@ vendor/
 ## Project config
 Config/config.json
 *-config.php
+
+## Logifles
+logs/
