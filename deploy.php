@@ -43,7 +43,7 @@ if(!isset($USER_CONFIG) || !is_array($USER_CONFIG))
 	$USER_CONFIG = array();
 
 // Merge settings
-array_walk($CONFIG = array(
+$CONFIG = array(
 	"secret_token" => "AverySecretTokenOnlyYouShouldKnow",
 	"tmp_dir" => "/tmp/spgcd-artifacts",
 	"gitlab_api_uri" => "https://gitlab.com/api/v3",
@@ -57,7 +57,8 @@ array_walk($CONFIG = array(
 	"email_error" => false,
 	"logging" => false,
 	"logging_file" => 'logs/' . time() . '.log'
-), function(&$item, $key) {
+);
+array_walk($CONFIG, function(&$item, $key) {
 	if(isset($USER_CONFIG[$key]) && gettype($item) === gettype($USER_CONFIG[$key]))
 		$item = $USER_CONFIG[$key];
 });
