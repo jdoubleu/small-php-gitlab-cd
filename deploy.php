@@ -101,12 +101,15 @@ function log($msg) {
  *
  * Either close file handle or end html document
  *
- * Should be placed at the end of the file or when no more
- * logging is needed.
+ * Is called when the script aborts or finishes
  */
-if(!$CONFIG['logging']) {
-	if($CONFIG['logging'] == "FILE" && $loghandle)
-		fclose($loghandle);
-	elseif($CONFIG['logging'] == "OUTPUT" && $loghandle)
-		echo '</body></html>';
-}
+register_shutdown_function(function() {
+	global $CONFIG, $loghandle;
+
+	if(!$CONFIG['logging']) {
+		if($CONFIG['logging'] == "FILE" && $loghandle)
+			fclose($loghandle);
+		elseif($CONFIG['logging'] == "OUTPUT" && $loghandle)
+			echo '</body></html>';
+	}
+});
