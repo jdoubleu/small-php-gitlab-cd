@@ -162,9 +162,17 @@ else
 if(MODE == "REQUEST" && $requestPayload['object_kind'] != "build")
 	log("Invalid object_kind in request payload. Expected \"build\" got \"" . $requestPayload['object_kind'] . "\"!") && exit(122);
 
+// Get build id
+if(MODE == "REQUEST")
+	$build_id = $requestPayload['build_id'];
+
 // Check build status
 if(MODE == "REQUEST" && $requestPayload['build_status'] != "success")
 	log("The build failed! Need a successful build!") && exit(123);
+
+// Check ref/branches
+if(MODE == "REQUEST" && !in_array($requestPayload['ref'], $CONFIG['branches']))
+	log("This build will be skipped due to mismatching branches.");
 
 /*
  * ==================== END deployment ====================
