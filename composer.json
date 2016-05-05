@@ -3,7 +3,7 @@
   "description": "This package contains a few php scripts to realize continuous delivery, integrated with gitlab.",
   "keywords": ["gitlab", "deployment", "builds"],
   "homepage": "https://github.com/jdoubleu/small-php-gitlab-cd",
-  "version": "0.2",
+  "version": "0.2.1",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [

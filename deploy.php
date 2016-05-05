@@ -5,7 +5,7 @@
  * A small and simple php script to deploy artifacts generated with and by the GitLab CI (https://about.gitlab.com/gitlab-ci/).
  * Have a look at the README file for more information.
  *
- * @version 0.2
+ * @version 0.2.1
  * @license MIT
  * @link https://github.com/jdoubleu/small-php-gitlab-cd
  */
@@ -15,7 +15,7 @@ namespace jdoubleu\SmallPhpGitlabCd;
 /**
  * Checks if this script is called via web server or via CLI
  */
-define("MODE", (!empty($argc) && isset($argc[0]) ? "CLI" : "REQUEST"));
+define("MODE", (!empty($argc) && isset($argv[0]) ? "CLI" : "REQUEST"));
 
 /**
  * Looks for a config file named after this file.
@@ -141,14 +141,16 @@ if(MODE == "REQUEST") {
 	else
 		log("Got a request payload!");
 } elseif(MODE == "CLI") {
+	$pkey = array_search('-p', $argv);
 	if($CONFIG['project_id'] >= 0)
 		$project_id = $CONFIG['project_id'];
-	elseif($pkey = array_search('-p', $argv) && isset($argv[$pkey+1]))
+	elseif($pkey && isset($argv[$pkey+1]))
 		$project_id = $argv[$pkey+1];
 	else
 		log("No project id given! Use -p parameter (See help for more information).", 114);
 
-	if($bkey = array_search('-b', $argv) && isset($argv[$bkey+1]))
+	$bkey = array_search('-b', $argv);
+	if($bkey && isset($argv[$bkey+1]))
 		$build_id = $argv[$bkey+1];
 	else
 		log("A build id is not given! Use -b parameter (See help for more information).", 113);
