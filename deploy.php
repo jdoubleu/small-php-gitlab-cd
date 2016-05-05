@@ -117,6 +117,19 @@ if(MODE == "REQUEST") {
 		log("Invalid secret token! Aborting") && exit(100);
 }
 
+/*
+ * Check if needed tools are available.
+ *
+ * Tools: curl, unzip, rsync
+ */
+$neededBinaries = array('curl', 'unzip', 'rsync');
+
+foreach($neededBinaries as $bin) {
+	$path = trim(shell_exec('which ' . $bin));
+	if(!$path)
+		log("Binaries for " . $bin . " not found! Aborting") && exit(200);
+}
+
 // Reads incoming payload or argument
 if(MODE == "REQUEST") {
 	if(($requestPayload = file_get_contents('php://input')) == false)
@@ -137,19 +150,6 @@ if(MODE == "REQUEST" && $requestPayload['object_kind'] != "build")
 // Check build status
 if(MODE == "REQUEST" && $requestPayload['build_status'] != "success")
 	log("The build failed! Need a successful build!") && exit(123);
-
-/*
- * Check if needed tools are available.
- *
- * Tools: curl, unzip, rsync
- */
-$neededBinaries = array('curl', 'unzip', 'rsync');
-
-foreach($neededBinaries as $bin) {
-	$path = trim(shell_exec('which ' . $bin));
-	if(!$path)
-		log("Binaries for " . $bin . " not found! Aborting") && exit(200);
-}
 
 /*
  * ==================== END deployment ====================
