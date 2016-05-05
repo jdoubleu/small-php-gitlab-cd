@@ -180,6 +180,24 @@ if(MODE == "REQUEST" && !in_array($requestPayload['ref'], $CONFIG['branches']))
 if(!file_exists($CONFIG['tmp_dir']) || !is_dir($CONFIG['tmp_dir']))
 	log('TMP dir does not exist or is not a directory! Aborting.') && exit(250);
 
+/*
+ * Download artifacts
+ */
+$curl_exec = sprintf(
+	'curl -H %s -o % %s',
+	"PRIVATE-TOKEN: " . $CONFIG['gitlab_api_token'],
+	$CONFIG['tmp_dir'] . '/artifacts-' . time() . '.zip',
+	$CONFIG['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts'
+);
+
+$tmp = array();
+exec($curl_exec .' 2>&1', $tmp, $return_code); // Execute the command
+
+log("Executed curl: " . trim(implode("\n", $tmp)));
+if(!$return_code)
+	log("Error executing curl to download artifacts! Aborting") && exit(300);
+
+/*
  * ==================== END deployment ====================
  */
 
