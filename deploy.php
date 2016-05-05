@@ -86,13 +86,13 @@ function log($msg) {
 	if($CONFIG['logging'] == "FILE") {
 		if(!$loghandle)
 			$loghandle = fopen($CONFIG['logging_file'], 'a');
-		fwrite($loghandle, '[' . time() . '] ' . $msg);
+		fwrite($loghandle, '[' . time() . '] ' . $msg . "\n");
 	} elseif($CONFIG['logging'] == "OUTPUT") {
 		if(!$loghandle && MODE == "REQUEST")
 			echo $loghandle = '<!DOCUMENT html>\n' .
 				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
 				'<body>';
-		echo '[' . time() . '] ' . htmlspecialchars($msg);
+		echo '[' . time() . '] ' . htmlspecialchars($msg) . "\n";
 	}
 }
 
