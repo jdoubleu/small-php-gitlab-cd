@@ -62,7 +62,9 @@ $CONFIG = array(
 	"logging_file" => 'logs/' . time() . '.log'
 );
 array_walk($CONFIG, function(&$item, $key) {
-	if(isset($USER_CONFIG[$key]) && gettype($item) === gettype($USER_CONFIG[$key]))
+	global $USER_CONFIG;
+
+	if(isset($USER_CONFIG[$key]))
 		$item = $USER_CONFIG[$key];
 });
 
