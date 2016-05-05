@@ -186,7 +186,7 @@ if(!file_exists($CONFIG['tmp_dir']) || !is_dir($CONFIG['tmp_dir']))
 $curl_exec = sprintf(
 	'curl -H %s -o % %s',
 	"PRIVATE-TOKEN: " . $CONFIG['gitlab_api_token'],
-	$CONFIG['tmp_dir'] . '/artifacts-' . time() . '.zip',
+	$CONFIG['tmp_dir'] . '/artifacts-' . $project_id . '-' . $build_id . '.zip',
 	$CONFIG['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts'
 );
 
