@@ -199,8 +199,8 @@ $commands = array();
  * Download artifacts
  */
 $commands['curl'] = sprintf(
-	'curl -H %s -o % %s',
-	"PRIVATE-TOKEN: " . $CONFIG['gitlab_api_token'],
+	'curl -H %s -o %s %s',
+	'"PRIVATE-TOKEN: ' . $CONFIG['gitlab_api_token'] . '"',
 	$artifact_file,
 	$CONFIG['gitlab_api_uri'] . '/projects/' . $project_id . '/builds/' . $build_id . '/artifacts'
 );
@@ -218,7 +218,7 @@ $commands['unzip'] = sprintf(
  * Deploy files to target
  */
 $commands['rsync'] = sprintf(
-	'rsync -rltgoDzvO %s %s %s',
+	'rsync -rltDzvO %s %s %s',
 	$artifact_path,
 	$CONFIG['target_dir'],
 	($CONFIG['delete_files']) ? '--delete-after' : ''
