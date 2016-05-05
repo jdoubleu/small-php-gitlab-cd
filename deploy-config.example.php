@@ -144,3 +144,25 @@ $USER_CONFIG["post_commands"] = array();
  * @var boolean|string
  */
 $USER_CONFIG["email_error"] = false;
+
+/**
+ * Logging
+ *
+ * Enable or disable logging. When logging should be enabled provide a mode.
+ * Either "FILE" to log into a given file or "OUTPUT" for direct output.
+ *
+ * @default false
+ * @var boolean|string
+ */
+$USER_CONFIG['logging'] = false;
+
+/**
+ * Logging File
+ *
+ * Provide a log file. This is only used if logging mode is "FILE".
+ * The folder should exists and the file should be writable/creatable by php.
+ *
+ * @see $USER_CONFIG['logging']
+ * @var string
+ */
+$USER_CONFIG['logging_file'] = 'logs/' . time() . '.log';
