@@ -13,7 +13,6 @@
     }
   ],
   "require": {
-    "ext-curl": "*",
-    "ext-zip": "*"
+    "php": ">=5.6"
   }
 }
