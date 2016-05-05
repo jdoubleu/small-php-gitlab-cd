@@ -141,14 +141,16 @@ if(MODE == "REQUEST") {
 	else
 		log("Got a request payload!");
 } elseif(MODE == "CLI") {
+	$pkey = array_search('-p', $argv);
 	if($CONFIG['project_id'] >= 0)
 		$project_id = $CONFIG['project_id'];
-	elseif($pkey = array_search('-p', $argv) && isset($argv[$pkey+1]))
+	elseif($pkey && isset($argv[$pkey+1]))
 		$project_id = $argv[$pkey+1];
 	else
 		log("No project id given! Use -p parameter (See help for more information).", 114);
 
-	if($bkey = array_search('-b', $argv) && isset($argv[$bkey+1]))
+	$bkey = array_search('-b', $argv);
+	if($bkey && isset($argv[$bkey+1]))
 		$build_id = $argv[$bkey+1];
 	else
 		log("A build id is not given! Use -b parameter (See help for more information).", 113);
