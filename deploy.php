@@ -10,6 +10,8 @@
  * @link https://github.com/jdoubleu/small-php-gitlab-cd
  */
 
+namespace jdoubleu\SmallPhpGitlabCd;
+
 /**
  * Checks if this script is called via web server or via CLI
  */
