@@ -15,7 +15,7 @@ namespace jdoubleu\SmallPhpGitlabCd;
 /**
  * Checks if this script is called via web server or via CLI
  */
-define("MODE", (!empty($argc) && isset($argc[0]) ? "CLI" : "REQUEST"));
+define("MODE", (!empty($argc) && isset($argv[0]) ? "CLI" : "REQUEST"));
 
 /**
  * Looks for a config file named after this file.
