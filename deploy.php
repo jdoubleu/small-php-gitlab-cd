@@ -97,6 +97,44 @@ function log($msg) {
 }
 
 /*
+ * ==================== deployment ====================
+ */
+
+/*
+ * Handle incoming request and log it.
+ * Check if request contains a payload
+ */
+log("small-php-gitlab-cd started");
+log("MODE is " . MODE);
+if(isset($_SERVER['HTTP_REFERER']))
+	log("Referer: " . $_SERVER['HTTP_REFERER']);
+if(isset($_SERVER['QUERY_STRING']))
+	log("QUERY STRING: " . $_SERVER['QUERY_STRING']);
+
+// Check if secret token is need and given
+if(MODE == "REQUEST") {
+	if(!isset($_REQUEST['secret_token']) || $_REQUEST['secret_token'] != $CONFIG['secret_token'])
+		log("Invalid secret token! Aborting") && exit(100);
+}
+
+// Reads incoming payload or argument
+if(MODE == "REQUEST") {
+	if(($requestPayload = file_get_contents('php://input')) == false)
+		log("Unknown Request Payload") && exit(111);
+	elseif(!$requestPayload = json_decode($requestPayload, true))
+		log("Request Payload couldn't be analyzed. Failed with json decode error: " . json_last_error_msg()) && exit(112);
+	else
+		log("Got a request payload!");
+} elseif(MODE == "CLI") {
+	if(!$bkey = array_search('-b', $argv) || !isset($argv[$bkey+1]))
+		log("A build id is not given! Use -b parameter (See help for more information).") && exit(113);
+}
+
+/*
+ * ==================== END deployment ====================
+ */
+
+/*
  * Close logging
  *
  * Either close file handle or end html document
