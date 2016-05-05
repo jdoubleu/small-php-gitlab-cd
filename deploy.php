@@ -140,6 +140,14 @@ if(MODE == "REQUEST") {
 if(MODE == "REQUEST" && $CONFIG['project_id'] >= 0 && $CONFIG['project_id'] != $requestPayload['project_id'])
 	log("Project id is not given!") && exit(121);
 
+// Check if correct object kind in payload if request
+if(MODE == "REQUEST" && $requestPayload['object_kind'] != "build")
+	log("Invalid object_kind in request payload. Expected \"build\" got \"" . $requestPayload['object_kind'] . "\"!") && exit(122);
+
+// Check build status
+if(MODE == "REQUEST" && $requestPayload['build_status'] != "success")
+	log("The build failed! Need a successful build!") && exit(123);
+
 /*
  * ==================== END deployment ====================
  */
