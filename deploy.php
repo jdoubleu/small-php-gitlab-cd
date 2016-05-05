@@ -88,7 +88,7 @@ function log($msg) {
 			$loghandle = fopen($CONFIG['logging_file'], 'a');
 		fwrite($loghandle, '[' . time() . '] ' . $msg);
 	} elseif($CONFIG['logging'] == "OUTPUT") {
-		if(!$loghandle)
+		if(!$loghandle && MODE == "REQUEST")
 			echo $loghandle = '<!DOCUMENT html>\n' .
 				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
 				'<body>';
