@@ -1,4 +1,4 @@
-# Small PHP GitLab CD v0.2
+# Small PHP GitLab CD v0.2.1
 This project contains a simple script to deploy GitLab artifacts.
 
 Build artifcats can be build using the GitLab CI ([more here](http://doc.gitlab.com/ce/ci/build_artifacts/README.html)).
