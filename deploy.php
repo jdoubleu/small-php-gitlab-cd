@@ -237,12 +237,12 @@ foreach($commands as $cmd) {
 	$stdout = array();
 
 	log("Executing '" . $cmd . "'");
-	exec($cmd . ' 2&>1', $stdout, $code);	// Executes a command
+	exec($cmd . ' 2>&1', $stdout, $code);	// Executes a command
 
 	log("Returns " . trim(implode("\n", $stdout)));
 
 	// on error
-	if(!$code) {
+	if($code != 0) {
 		log("Command execution ended with an error!");
 
 		if(isset($commands['cleanup']))
