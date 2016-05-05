@@ -91,6 +91,7 @@ function error($code) {
  * @var boolean|string|resource
  */
 $loghandle = false;
+
 /**
  * Logging
  *
@@ -109,6 +110,7 @@ function log($msg) {
 			$loghandle = fopen($CONFIG['logging_file'], 'a');
 		fwrite($loghandle, '[' . time() . '] ' . $msg . "\n");
 	} elseif($CONFIG['logging'] == "OUTPUT") {
+		ob_start();
 		if(!$loghandle && MODE == "REQUEST")
 			echo $loghandle = '<!DOCUMENT html>\n' .
 				'<html><head><title>small-php-gitlab-cd</title><meta charset="utf-8"/></head>' .
@@ -298,4 +300,39 @@ register_shutdown_function(function() {
 		elseif($CONFIG['logging'] == "OUTPUT" && $loghandle)
 			echo '</body></html>';
 	}
+});
+
+/*
+ * Mail if error happened
+ *
+ * Is called when the script aborts and email error reporting is enabled.
+ */
+register_shutdown_function(function() {
+	global $CONFIG, $error, $loghandle;
+
+	if($CONFIG['email_error'] && $error) {
+		$error = sprintf(
+			'Deployment error on %s using %s!',
+			$_SERVER['HTTP_HOST'],
+			__FILE__
+		);
+
+		// get error log
+		$output = "";
+		if(!$CONFIG['logging']) {
+			if($CONFIG['logging'] == "FILE" && $loghandle)
+				$output = file_get_contents($CONFIG['logging_file']);
+			elseif($CONFIG['logging'] == "OUTPUT" && $loghandle) {
+				$output = ob_get_contents();
+				ob_end_clean();
+			}
+		}
+
+		$headers = array();
+		$headers[] = sprintf('From: Small PHP GitLab CD <small-php-gitlab-cd@%s>', $_SERVER['HTTP_HOST']);
+		$headers[] = sprintf('X-Mailer: PHP/%s', phpversion());
+		mail($CONFIG['email_error'], $error, strip_tags(trim($output)), implode("\r\n", $headers));
+	}
+
+	ob_end_flush();
 });
